@@ -210,13 +210,25 @@ function startScenario() {
     displayScenario(scenario[currentScenario]);
 }
 
+function playSound() {
+    const audio = new Audio('soundRHsucre.mp3'); // Assurez-vous que le chemin est correct
+    audio.play()
+        .then(() => {
+            console.log("-->");
+        })
+        .catch(error => {
+            console.error("error ", error);
+        });
+}
+
 function displayScenario(scene) {
     const scenarioDiv = document.getElementById("scenario");
     const option1Div = document.getElementById("option_1");
     const option2Div = document.getElementById("option_2");
     scenarioDiv.innerHTML = `<h2>${scene.text}</h2>`;
-    option1Div.innerHTML = ''
-    option2Div.innerHTML = ''
+    option1Div.innerHTML = '';
+    option2Div.innerHTML = '';
+    
     if (scene.options) {
         Object.keys(scene.options).forEach((key, index) => {
             const option = scene.options[key];
@@ -225,6 +237,13 @@ function displayScenario(scene) {
             button.onclick = () => {
                 if (option.type) {
                     choices[option.type]++;
+                    // Change background based on last choice
+                    console.log(option.type, option.type === "Commercial")
+                    if (option.type === "Commercial") {
+                        document.getElementById('background-container').style.backgroundImage = "url('rh_man.webp')";
+                    } else {
+                        document.getElementById('background-container').style.backgroundImage = "url('rh_woman.webp')";
+                    }
                 }
                 currentScenario = option.next;
                 if (option.showResults) {
@@ -232,15 +251,15 @@ function displayScenario(scene) {
                 } else {
                     displayScenario(scenario[currentScenario]);
                 }
+                playSound();
             };
-            if(index == 0) {
+            if (index == 0) {
                 const title = document.createElement("h3");
-                console.log(option, option.title)
                 title.innerText = option.title;
                 scenarioDiv.insertBefore(title, scenarioDiv.firstChild);
                 option1Div.appendChild(button);
             } else {
-                option2Div.appendChild(button)
+                option2Div.appendChild(button);
             }
         });
     } else if (scene.next) {
@@ -265,8 +284,12 @@ function displayResults() {
     let resultText = "";
     if (choices.Commercial > choices.RH) {
         resultText = "Vous semblez être orienté vers un profil commercial. Vous excellez dans les stratégies de placement, la négociation avec les entreprises clientes et l'analyse de marché.";
-    } else {
+        document.getElementById('background-container').style.backgroundImage = "url('rh_man.webp')";
+    } else if (choices.RH > choices.Commercial) {
         resultText = "Vous avez une inclinaison pour un profil RH. Vous êtes doué pour la gestion des talents intérimaires, la médiation des conflits et le développement des compétences.";
+        document.getElementById('background-container').style.backgroundImage = "url('rh_woman.webp')";
+    } else {
+        resultText = "Vous avez des compétences équilibrées entre les profils RH et Commercial. Vous pouvez explorer davantage les deux domaines pour affiner votre orientation professionnelle.";
     }
     resultText += `<br><br>Questions répondues: ${choices.RH}/6 RH, ${choices.Commercial}/6 Commercial.<br>Temps écoulé: ${timeTaken} secondes.`;
     scenarioDiv.innerHTML = `<h3>Résultats</h3><p>${resultText}</p>`;

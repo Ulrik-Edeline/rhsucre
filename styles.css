@@ -13,14 +13,14 @@ body {
     left: 0;
 }
 
-.background-container {
+#background-container {
     margin: 0;
     padding: 0;
     position: absolute;
     width: 100%;
     height: 100%;
     z-index: -1;
-    background-image: url(rh.webp);
+    background-image: url(rh_woman.webp);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
